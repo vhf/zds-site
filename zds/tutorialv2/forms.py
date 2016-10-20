@@ -265,8 +265,11 @@ class ContentForm(ContainerForm):
             self._errors['image'] = self.error_class(
                 [_(u'Votre logo est trop lourd, la limite autorisée est de {} Ko')
                  .format(settings.ZDS_APP['gallery']['image_max_size'] / 1024)])
-        if not TagValidator.validate_raw_string(cleaned_data.get("tags")):
-            self._errors['tags'] = self.error_class([_(u'Vous avez entré un tag trop long.')])
+
+        tags_valid = TagValidator.validate_raw_string(cleaned_data.get('tags'))
+        if not tags_valid:
+            self._errors['tags'] = self.error_class([tags_valid])
+
         return cleaned_data
 
 
