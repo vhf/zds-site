@@ -31,14 +31,14 @@ Plus précisément :
 
 Sauf cas exceptionnel, la numérotation de X commence à 1, la numérotation de Y commence à 0, la numérotation de Z commence à 0.
 
-La version du manifeste est donnée par le champ éponyme situé à la racine du manifeste ( ``{ version: "2.0.0"}``).
+La version du manifeste est donnée par le champ éponyme situé à la racine du manifeste ( ``{ version: "2.0.1"}``).
 L'absence du champ version est interprétée comme ``{version: "1.0"}``.
 Les 0 non significatifs sont optionnels ainsi ``{version: "1"}`` est strictement équivalent à ``{version: "1.0"}`` lui-même strictement équivalent à ``{version: "1.0.0"}``.
 
 Version 2.0
 -----------
 
-La version 2.0 est la version actuelement utilisée.
+La version 2.0 est la version actuellement utilisée.
 
 .. sourcecode:: json
 
@@ -51,7 +51,7 @@ La version 2.0 est la version actuelement utilisée.
         "version": 2,
         "description": "Une description",
         "type": "TUTORIAL",
-        "licence": "Beerware",
+        "license": "Beerware",
         "children": [
             {
                 "object": "container",
@@ -79,7 +79,7 @@ La version 2.0 est la version actuelement utilisée.
 4. ``slug`` : slug du contenu qui permet de faire une url SEO-friendly. Pour rappel, `certaines contraintes doivent être respectées dans le choix du slug <contents.html#des-objets-en-general>`_. **Obligatoire**.  ATENTION : si ce slug existe déjà dans notre base de données, il est possible qu'un nombre lui soit ajouté
 5. ``introduction`` : le nom du fichier Mardown qui possède l'introduction. Il doit pointer vers le dossier courant. *Optionnel mais conseillé*
 6. ``conclusion`` : le nom du fichier Mardown qui possède la conclusion. Il doit pointer vers le dossier courant. *Optionnel mais conseillé*
-7. ``licence`` : nom complet de la license. *A priori* les licences "CC" et "Tous drois réservés" sont supportées. Le support de toute autre licence dépendra du site utilisant le code de ZdS (fork) que vous visez. **Obligatoire**
+7. ``license`` : nom complet de la license. *A priori* les licences "CC" et "Tous drois réservés" sont supportées. Le support de toute autre licence dépendra du site utilisant le code de ZdS (fork) que vous visez. **Obligatoire**
 8. ``children`` : tableau contenant l'architecture du contenu.
     1. ``object`` : type d'enfant (*container* ou *extract*, selon qu'il s'agisse d'une section ou d'un texte). **Obligatoire**
     2. ``title`` : le titre de l'enfant. **Obligatoire**
@@ -90,6 +90,11 @@ La version 2.0 est la version actuelement utilisée.
     7. ``text`` : nom du fichier contenant le texte quand l'enfant est de type *extract*. Nous conseillons de garder la convention ``nom de fichier = slug.md`` mais rien n'est obligatoire à ce sujet. **Obligatoire**
 
 
+.. note::
+
+    Changelog:
+
+        * v2.0.1 : le champ ``licence`` se nomme désormais ``license``
 
 
 Version 1.0

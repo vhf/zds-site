@@ -14,7 +14,7 @@ except ImportError:
 
 
 class Command(BaseCommand):
-    help = 'Create a v2.0 manifest from a 1.0 manifest.json'
+    help = 'Create a v2.0.1 manifest from a 1.0 manifest.json'
     args = 'manifest_path'
 
     def handle(self, *args, **options):
@@ -33,7 +33,11 @@ class Command(BaseCommand):
                 versioned.introduction = data["introduction"]
             if "conclusion" in data:
                 versioned.conclusion = data["conclusion"]
-            versioned.license = License.objects.filter(code=data["license"]).first()
+            if 'license' in data:
+                versioned.license = data['license']
+            elif 'licence' in data:  # backward compatibility with previous json schema
+                versioned.license = data['licence']
+            versioned.license = License.objects.filter(code=versioned.license).first()
             versioned.version = "2.0"
             versioned.slug = slugify(data["title"])
             if "parts" in data:
