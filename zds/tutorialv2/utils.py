@@ -26,6 +26,7 @@ from zds.utils import slugify as old_slugify
 from zds.utils.models import License
 
 
+
 def all_is_string_appart_from_children(dict_representation):
     """check all keys are string appart from the children key
     :param dict_representation: the json decoded dictionary
@@ -463,6 +464,13 @@ def get_content_from_json(json, sha, slug_last_draft, public=False, max_title_le
     :rtype: models.models_versioned.VersionedContent|models.models_database.PublishedContent
     """
 
+    def get_license(json):
+        if 'license' in json:
+            return License.objects.filter(code=json['license']).first()
+        elif 'licence' in json:  # backward compatibility with previous json schema
+            return License.objects.filter(code=json['licence']).first()
+        return False
+
     from zds.tutorialv2.models.models_versioned import Container, Extract, VersionedContent, PublicContent
 
     if 'version' in json and json['version'] == 2:
@@ -497,10 +505,7 @@ def get_content_from_json(json, sha, slug_last_draft, public=False, max_title_le
             if json['type'] == 'ARTICLE' or json['type'] == 'TUTORIAL':
                 versioned.type = json['type']
 
-        if 'license' in json:
-            versioned.license = License.objects.filter(code=json['license']).first()
-        elif 'licence' in json:  # backward compatibility with previous json schema
-            versioned.license = License.objects.filter(code=json['licence']).first()
+        versioned.license = get_license(json)
 
         if not versioned.license:
             versioned.license = License.objects.filter(pk=settings.ZDS_APP['content']['default_license_pk']).first()
@@ -535,10 +540,7 @@ def get_content_from_json(json, sha, slug_last_draft, public=False, max_title_le
         if "conclusion" in json:
             versioned.conclusion = json["conclusion"]
 
-        if 'license' in json:
-            versioned.license = License.objects.filter(code=json['license']).first()
-        elif 'licence' in json:  # backward compatibility with previous json schema
-            versioned.license = License.objects.filter(code=json['licence']).first()
+        versioned.license = get_license(json)
 
         if not versioned.license:
             versioned.license = License.objects.filter(pk=settings.ZDS_APP['content']['default_license_pk']).first()
