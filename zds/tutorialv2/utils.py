@@ -858,11 +858,10 @@ def export_content(content):
     dct = export_container(content)
 
     # append metadata :
-    dct['version'] = 2  # to recognize old and new version of the content
+    dct['version'] = '2.0.1'  # to recognize old and new version of the content
     dct['description'] = content.description
     dct['type'] = content.type
-    if content.license:
-        dct['license'] = content.license.code
+    dct['license'] = content.license.code
 
     return dct
 
