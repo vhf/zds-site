@@ -212,7 +212,7 @@ class ContentForm(ContainerForm):
         ),
         queryset=License.objects.order_by('title').all(),
         required=True,
-        empty_label=None
+        empty_label=_('Choisir une licence')
     )
 
     helps = forms.ModelMultipleChoiceField(
