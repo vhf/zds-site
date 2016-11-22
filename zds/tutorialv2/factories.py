@@ -7,7 +7,7 @@ from zds.forum.factories import PostFactory, TopicFactory
 
 from zds.tutorialv2.models.models_database import PublishableContent, Validation, ContentReaction
 from zds.tutorialv2.models.models_versioned import Container, Extract
-from zds.utils.models import SubCategory, Licence
+from zds.utils.models import SubCategory, License
 from zds.gallery.factories import GalleryFactory, UserGalleryFactory
 from zds.tutorialv2.utils import init_new_repo
 from zds.tutorialv2.publication_utils import publish_content
@@ -191,14 +191,14 @@ class ValidationFactory(factory.DjangoModelFactory):
         model = Validation
 
 
-class LicenceFactory(factory.DjangoModelFactory):
+class LicenseFactory(factory.DjangoModelFactory):
     class Meta:
-        model = Licence
+        model = License
 
     code = factory.Sequence(lambda n: 'bidon-no{0}'.format(n + 1))
     title = factory.Sequence(lambda n: 'Licence bidon no{0}'.format(n + 1))
 
     @classmethod
     def _prepare(cls, create, **kwargs):
-        licence = super(LicenceFactory, cls)._prepare(create, **kwargs)
-        return licence
+        license = super(LicenseFactory, cls)._prepare(create, **kwargs)
+        return license

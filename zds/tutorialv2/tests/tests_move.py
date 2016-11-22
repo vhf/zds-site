@@ -11,7 +11,7 @@ from django.core.urlresolvers import reverse
 
 from zds.settings import BASE_DIR
 from zds.member.factories import ProfileFactory, StaffProfileFactory
-from zds.tutorialv2.factories import PublishableContentFactory, ContainerFactory, ExtractFactory, LicenceFactory, \
+from zds.tutorialv2.factories import PublishableContentFactory, ContainerFactory, ExtractFactory, LicenseFactory, \
     SubCategoryFactory
 from zds.tutorialv2.models.models_database import PublishableContent
 from zds.gallery.factories import UserGalleryFactory
@@ -38,7 +38,7 @@ class ContentMoveTests(TestCase):
         self.mas = ProfileFactory().user
         settings.ZDS_APP['member']['bot_account'] = self.mas.username
 
-        self.licence = LicenceFactory()
+        self.license = LicenseFactory()
         self.subcategory = SubCategoryFactory()
 
         self.user_author = ProfileFactory().user
@@ -48,7 +48,7 @@ class ContentMoveTests(TestCase):
         self.tuto = PublishableContentFactory(type='TUTORIAL')
         self.tuto.authors.add(self.user_author)
         UserGalleryFactory(gallery=self.tuto.gallery, user=self.user_author, mode='W')
-        self.tuto.licence = self.licence
+        self.tuto.license = self.license
         self.tuto.subcategory.add(self.subcategory)
         self.tuto.save()
 
@@ -523,7 +523,7 @@ class ContentMoveTests(TestCase):
         telling it is tricky is kind of euphemism.
         :return:
         """
-        LicenceFactory(code="CC BY")
+        LicenseFactory(code="CC BY")
         self.assertEqual(
             self.client.login(
                 username=self.user_author.username,

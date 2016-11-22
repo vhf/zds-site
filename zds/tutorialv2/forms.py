@@ -8,7 +8,7 @@ from crispy_forms.layout import HTML, Layout, Submit, Field, ButtonHolder, Hidde
 from django.core.urlresolvers import reverse
 
 from zds.utils.forms import CommonLayoutModalText, CommonLayoutEditor, CommonLayoutVersionEditor
-from zds.utils.models import SubCategory, Licence
+from zds.utils.models import SubCategory, License
 from zds.tutorialv2.models import TYPE_CHOICES
 from zds.utils.models import HelpWriting
 from zds.tutorialv2.models.models_database import PublishableContent
@@ -201,16 +201,16 @@ class ContentForm(ContainerForm):
         widget=forms.CheckboxSelectMultiple()
     )
 
-    licence = forms.ModelChoiceField(
+    license = forms.ModelChoiceField(
         label=(
             _(u'Licence de votre publication (<a href="{0}" alt="{1}">En savoir plus sur les licences et {2}</a>).')
             .format(
-                settings.ZDS_APP['site']['licenses']['licence_info_title'],
-                settings.ZDS_APP['site']['licenses']['licence_info_link'],
+                settings.ZDS_APP['site']['licenses']['license_info_title'],
+                settings.ZDS_APP['site']['licenses']['license_info_link'],
                 settings.ZDS_APP['site']['name']
             )
         ),
-        queryset=Licence.objects.all(),
+        queryset=License.objects.order_by('title').all(),
         required=True,
         empty_label=None
     )
@@ -237,7 +237,7 @@ class ContentForm(ContainerForm):
             Field('introduction', css_class='md-editor'),
             Field('conclusion', css_class='md-editor'),
             Field('last_hash'),
-            Field('licence'),
+            Field('license'),
             Field('subcategory', template='crispy/checkboxselectmultiple.html'),
             HTML(_(u"<p>Demander de l'aide à la communauté !<br>"
                    u"Si vous avez besoin d'un coup de main, "

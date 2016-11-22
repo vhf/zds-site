@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Mainly based on django-email-obfuscator (https://github.com/morninj/django-email-obfuscator - MIT Licence)
+# Mainly based on django-email-obfuscator (https://github.com/morninj/django-email-obfuscator - MIT License)
 # https://github.com/morninj/django-email-obfuscator/blob/master/email_obfuscator/templatetags/email_obfuscator.py
 
 from django import template

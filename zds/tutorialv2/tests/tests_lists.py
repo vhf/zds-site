@@ -11,7 +11,7 @@ from django.core.urlresolvers import reverse
 
 from zds.settings import BASE_DIR
 from zds.member.factories import ProfileFactory, StaffProfileFactory, UserFactory
-from zds.tutorialv2.factories import PublishableContentFactory, ContainerFactory, ExtractFactory, LicenceFactory, \
+from zds.tutorialv2.factories import PublishableContentFactory, ContainerFactory, ExtractFactory, LicenseFactory, \
     SubCategoryFactory, PublishedContentFactory, ValidationFactory
 from zds.gallery.factories import UserGalleryFactory
 from zds.forum.factories import ForumFactory, CategoryFactory
@@ -35,7 +35,7 @@ class ContentTests(TestCase):
         self.mas = ProfileFactory().user
         settings.ZDS_APP['member']['bot_account'] = self.mas.username
 
-        self.licence = LicenceFactory()
+        self.license = LicenseFactory()
         self.subcategory = SubCategoryFactory()
 
         self.user_author = ProfileFactory().user
@@ -45,7 +45,7 @@ class ContentTests(TestCase):
         self.tuto = PublishableContentFactory(type='TUTORIAL')
         self.tuto.authors.add(self.user_author)
         UserGalleryFactory(gallery=self.tuto.gallery, user=self.user_author, mode='W')
-        self.tuto.licence = self.licence
+        self.tuto.license = self.license
         self.tuto.subcategory.add(self.subcategory)
         self.tuto.save()
 

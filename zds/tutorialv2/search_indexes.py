@@ -11,7 +11,7 @@ class ContentIndex(indexes.SearchIndex, indexes.Indexable):
     pubdate = indexes.DateTimeField(model_attr='pubdate', stored=True)
     updatedate = indexes.DateTimeField(model_attr='update_date', stored=True)
 
-    licence = indexes.CharField(model_attr='licence', stored=True)
+    license = indexes.CharField(model_attr='license', stored=True)
 
     tags = indexes.MultiValueField()
     authors = indexes.MultiValueField()
@@ -51,7 +51,7 @@ class ContainerIndex(indexes.SearchIndex, indexes.Indexable):
     pubdate = indexes.DateTimeField(stored=True)
     updatedate = indexes.DateTimeField(stored=True)
 
-    licence = indexes.CharField(stored=True)
+    license = indexes.CharField(stored=True)
 
     tags = indexes.MultiValueField()
     authors = indexes.MultiValueField()
@@ -79,8 +79,8 @@ class ContainerIndex(indexes.SearchIndex, indexes.Indexable):
     def prepare_authors(self, obj):
         return [author.username for author in obj.search_index_content.authors.all()] or None
 
-    def prepare_licence(self, obj):
-        return obj.search_index_content.licence
+    def prepare_license(self, obj):
+        return obj.search_index_content.license
 
     def prepare_pubdate(self, obj):
         return obj.search_index_content.pubdate
@@ -108,7 +108,7 @@ class ExtractIndex(indexes.SearchIndex, indexes.Indexable):
     pubdate = indexes.DateTimeField(stored=True)
     updatedate = indexes.DateTimeField(stored=True)
 
-    licence = indexes.CharField(stored=True)
+    license = indexes.CharField(stored=True)
 
     tags = indexes.MultiValueField()
     authors = indexes.MultiValueField()
@@ -134,8 +134,8 @@ class ExtractIndex(indexes.SearchIndex, indexes.Indexable):
     def prepare_authors(self, obj):
         return [author.username for author in obj.search_index_content.authors.all()] or None
 
-    def prepare_licence(self, obj):
-        return obj.search_index_content.licence
+    def prepare_license(self, obj):
+        return obj.search_index_content.license
 
     def prepare_pubdate(self, obj):
         return obj.search_index_content.pubdate

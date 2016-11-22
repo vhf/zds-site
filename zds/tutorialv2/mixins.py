@@ -75,7 +75,7 @@ class SingleContentViewMixin(object):
 
         if self.prefetch_all:
             queryset = queryset.\
-                select_related("licence") \
+                select_related("license") \
                 .prefetch_related("authors") \
                 .prefetch_related("subcategory") \
 

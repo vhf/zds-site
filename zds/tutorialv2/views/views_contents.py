@@ -46,7 +46,7 @@ from zds.tutorialv2.utils import search_container_or_404, get_target_tagged_tree
     try_adopt_new_child, TooDeepContainerError, BadManifestError, get_content_from_json, init_new_repo, \
     default_slug_pool, BadArchiveError, InvalidSlugError
 from zds.utils.forums import send_post, lock_topic, create_topic, unlock_topic
-from zds.utils.models import Licence
+from zds.utils.models import License
 from zds.utils.models import HelpWriting
 from zds.utils.mps import send_mp
 from zds.utils.paginator import ZdSPagingListView, make_pagination
@@ -75,7 +75,6 @@ class CreateContent(LoggedWithReadWriteHability, FormView):
     def get_form(self, form_class=ContentForm):
         form = super(CreateContent, self).get_form(form_class)
         form.initial["type"] = self.created_content_type
-        form.initial['licence'] = Licence.objects.get(pk=settings.ZDS_APP['content']['default_licence_pk'])
         return form
 
     def form_valid(self, form):
@@ -84,7 +83,7 @@ class CreateContent(LoggedWithReadWriteHability, FormView):
         self.content.title = form.cleaned_data['title']
         self.content.description = form.cleaned_data["description"]
         self.content.type = form.cleaned_data["type"]
-        self.content.licence = form.cleaned_data["licence"]
+        self.content.license = form.cleaned_data["license"]
 
         self.content.creation_date = datetime.now()
 
@@ -233,7 +232,7 @@ class EditContent(LoggedWithReadWriteHability, SingleContentFormViewMixin):
         initial['type'] = versioned.type
         initial['introduction'] = versioned.get_introduction()
         initial['conclusion'] = versioned.get_conclusion()
-        initial['licence'] = versioned.licence
+        initial['license'] = versioned.license
         initial['subcategory'] = self.object.subcategory.all()
         initial['tags'] = ', '.join([tag['title'] for tag in self.object.tags.values('title')]) or ''
         initial['helps'] = self.object.helps.all()
@@ -267,7 +266,7 @@ class EditContent(LoggedWithReadWriteHability, SingleContentFormViewMixin):
         # first, update DB (in order to get a new slug if needed)
         publishable.title = form.cleaned_data['title']
         publishable.description = form.cleaned_data["description"]
-        publishable.licence = form.cleaned_data["licence"]
+        publishable.license = form.cleaned_data["license"]
 
         publishable.update_date = datetime.now()
 
@@ -291,7 +290,7 @@ class EditContent(LoggedWithReadWriteHability, SingleContentFormViewMixin):
 
         # now, update the versioned information
         versioned.description = form.cleaned_data['description']
-        versioned.licence = form.cleaned_data['licence']
+        versioned.license = form.cleaned_data['license']
 
         sha = versioned.repo_update_top_container(form.cleaned_data['title'],
                                                   publishable.slug,
@@ -690,16 +689,16 @@ class UpdateContentWithArchive(LoggedWithReadWriteHability, SingleContentFormVie
                 return super(UpdateContentWithArchive, self).form_invalid(form)
             else:
 
-                # warn user if licence have changed:
+                # warn user if license have changed:
                 manifest = json_reader.loads(unicode(zfile.read('manifest.json'), 'utf-8'))
-                if 'licence' not in manifest or manifest['licence'] != new_version.licence.code:
+                if 'license' not in manifest or manifest['license'] != new_version.license.code:
                     messages.info(
-                        self.request, _(u'la licence « {} » a été appliquée.').format(new_version.licence.code))
+                        self.request, _(u'la licence « {} » a été appliquée.').format(new_version.license.code))
 
                 # first, update DB object (in order to get a new slug if needed)
                 self.object.title = new_version.title
                 self.object.description = new_version.description
-                self.object.licence = new_version.licence
+                self.object.license = new_version.license
                 self.object.type = new_version.type  # change of type is then allowed !!
                 self.object.save()
 
@@ -718,7 +717,7 @@ class UpdateContentWithArchive(LoggedWithReadWriteHability, SingleContentFormVie
                 self.object.insert_data_in_versioned(versioned)  # better have a clean version of those one
                 versioned.description = new_version.description
                 versioned.type = new_version.type
-                versioned.licence = new_version.licence
+                versioned.license = new_version.license
 
                 # update container (and repo)
                 introduction = ''
@@ -801,17 +800,17 @@ class CreateContentFromArchive(LoggedWithReadWriteHability, FormView):
                 return super(CreateContentFromArchive, self).form_invalid(form)
             else:
 
-                # warn user if licence have changed:
+                # warn user if license have changed:
                 manifest = json_reader.loads(unicode(zfile.read('manifest.json'), 'utf-8'))
-                if 'licence' not in manifest or manifest['licence'] != new_content.licence.code:
+                if 'license' not in manifest or manifest['license'] != new_content.license.code:
                     messages.info(
-                        self.request, _(u'la licence « {} » a été appliquée.'.format(new_content.licence.code)))
+                        self.request, _(u'la licence « {} » a été appliquée.'.format(new_content.license.code)))
 
                 # first, create DB object (in order to get a slug)
                 self.object = PublishableContent()
                 self.object.title = new_content.title
                 self.object.description = new_content.description
-                self.object.licence = new_content.licence
+                self.object.license = new_content.license
                 self.object.type = new_content.type  # change of type is then allowed !!
                 self.object.creation_date = datetime.now()
 
@@ -1855,7 +1854,7 @@ class ContentOfAuthor(ZdSPagingListView):
         queryset = queryset\
             .prefetch_related('authors')\
             .prefetch_related('subcategory')\
-            .select_related('licence')\
+            .select_related('license')\
             .select_related('image')
 
         # Filter.

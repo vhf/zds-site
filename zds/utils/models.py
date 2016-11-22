@@ -123,19 +123,19 @@ class CategorySubCategory(models.Model):
                 self.subcategory.title)
 
 
-class Licence(models.Model):
+class License(models.Model):
 
-    """Publication licence."""
+    """Publication license."""
     class Meta:
-        verbose_name = 'Licence'
-        verbose_name_plural = 'Licences'
+        verbose_name = 'License'
+        verbose_name_plural = 'Licenses'
 
     code = models.CharField('Code', max_length=20)
     title = models.CharField('Titre', max_length=80)
     description = models.TextField('Description')
 
     def __unicode__(self):
-        """Textual Licence Form."""
+        """Textual License Form."""
         return self.title
 
 

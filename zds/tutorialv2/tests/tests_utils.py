@@ -12,7 +12,7 @@ from zds.settings import BASE_DIR
 from django.core.urlresolvers import reverse
 
 from zds.member.factories import ProfileFactory, StaffProfileFactory
-from zds.tutorialv2.factories import PublishableContentFactory, ContainerFactory, LicenceFactory, ExtractFactory, \
+from zds.tutorialv2.factories import PublishableContentFactory, ContainerFactory, LicenseFactory, ExtractFactory, \
     PublishedContentFactory
 from zds.gallery.factories import UserGalleryFactory
 from zds.tutorialv2.models.models_versioned import Container
@@ -55,7 +55,7 @@ class UtilsTests(TestCase):
         self.mas = ProfileFactory().user
         settings.ZDS_APP['member']['bot_account'] = self.mas.username
 
-        self.licence = LicenceFactory()
+        self.license = LicenseFactory()
 
         self.user_author = ProfileFactory().user
         self.staff = StaffProfileFactory().user
@@ -63,7 +63,7 @@ class UtilsTests(TestCase):
         self.tuto = PublishableContentFactory(type='TUTORIAL')
         self.tuto.authors.add(self.user_author)
         UserGalleryFactory(gallery=self.tuto.gallery, user=self.user_author, mode='W')
-        self.tuto.licence = self.licence
+        self.tuto.license = self.license
         self.tuto.save()
 
         self.tuto_draft = self.tuto.load_version()
@@ -108,7 +108,7 @@ class UtilsTests(TestCase):
 
         article.authors.add(self.user_author)
         UserGalleryFactory(gallery=article.gallery, user=self.user_author, mode='W')
-        article.licence = self.licence
+        article.license = self.license
         article.save()
 
         # populate the article
@@ -163,7 +163,7 @@ class UtilsTests(TestCase):
 
         midsize_tuto.authors.add(self.user_author)
         UserGalleryFactory(gallery=midsize_tuto.gallery, user=self.user_author, mode='W')
-        midsize_tuto.licence = self.licence
+        midsize_tuto.license = self.license
         midsize_tuto.save()
 
         # populate with 2 chapters (1 extract each)
@@ -207,7 +207,7 @@ class UtilsTests(TestCase):
 
         bigtuto.authors.add(self.user_author)
         UserGalleryFactory(gallery=bigtuto.gallery, user=self.user_author, mode='W')
-        bigtuto.licence = self.licence
+        bigtuto.license = self.license
         bigtuto.save()
 
         # populate with 2 part (1 chapter with 1 extract each)
@@ -277,14 +277,14 @@ class UtilsTests(TestCase):
             os.path.join(BASE_DIR, "fixtures", "tuto", "balise_audio", "manifest.json"),
             os.path.join(BASE_DIR, "fixtures", "tuto", "balise_audio", "manifest2.json")
         )
-        LicenceFactory(code="CC BY")
+        LicenseFactory(code="CC BY")
         args = [os.path.join(BASE_DIR, "fixtures", "tuto", "balise_audio", "manifest2.json")]
         call_command('upgrade_manifest_to_v2', *args, **opts)
         manifest = open(os.path.join(BASE_DIR, "fixtures", "tuto", "balise_audio", "manifest2.json"), 'r')
         json = json_reader.loads(manifest.read())
 
         self.assertTrue(u"version" in json)
-        self.assertTrue(u"licence" in json)
+        self.assertTrue(u"license" in json)
         self.assertTrue(u"children" in json)
         self.assertEqual(len(json[u"children"]), 3)
         self.assertEqual(json[u"children"][0][u"object"], u"extract")
@@ -299,7 +299,7 @@ class UtilsTests(TestCase):
         json = json_reader.loads(manifest.read())
         os.unlink(args[0])
         self.assertTrue(u"version" in json)
-        self.assertTrue(u"licence" in json)
+        self.assertTrue(u"license" in json)
         self.assertTrue(u"children" in json)
         self.assertEqual(len(json[u"children"]), 5)
         self.assertEqual(json[u"children"][0][u"object"], u"container")
@@ -315,7 +315,7 @@ class UtilsTests(TestCase):
         json = json_reader.loads(manifest.read())
 
         self.assertTrue(u"version" in json)
-        self.assertTrue(u"licence" in json)
+        self.assertTrue(u"license" in json)
         self.assertTrue(u"children" in json)
         self.assertEqual(len(json[u"children"]), 1)
         os.unlink(args[0])

@@ -1,6 +1,6 @@
 from zds.tutorialv2.models.models_versioned import Extract, VersionedContent, Container
 from django.core.management.base import BaseCommand
-from zds.utils.models import Licence
+from zds.utils.models import License
 from uuslug import slugify
 import os
 
@@ -33,7 +33,7 @@ class Command(BaseCommand):
                 versioned.introduction = data["introduction"]
             if "conclusion" in data:
                 versioned.conclusion = data["conclusion"]
-            versioned.licence = Licence.objects.filter(code=data["licence"]).first()
+            versioned.license = License.objects.filter(code=data["license"]).first()
             versioned.version = "2.0"
             versioned.slug = slugify(data["title"])
             if "parts" in data:

@@ -32,7 +32,7 @@ class Command(BaseCommand):
                                             .prefetch_related('content')\
                                             .prefetch_related('content__subcategory')\
                                             .prefetch_related('content__authors')\
-                                            .prefetch_related('content__licence')\
+                                            .prefetch_related('content__license')\
                                             .prefetch_related('content__image')
 
         if args:

@@ -123,7 +123,7 @@ class ContactView(ListView):
 
 
 def eula(request):
-    """End-User Licence Agreement."""
+    """End-User License Agreement."""
     return render(request, 'pages/eula.html')
 
 

@@ -1017,7 +1017,7 @@ class VersionedContent(Container):
     # Metadata from json :
     description = ''
     type = ''
-    licence = None
+    license = None
 
     # Metadata from DB :
     pk = 0

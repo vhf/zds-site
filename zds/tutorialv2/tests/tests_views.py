@@ -22,7 +22,7 @@ from zds.mp.models import PrivateTopic, is_privatetopic_unread
 from zds.notification.models import TopicAnswerSubscription, ContentReactionAnswerSubscription, \
     NewPublicationSubscription, Notification
 from zds.settings import BASE_DIR
-from zds.tutorialv2.factories import PublishableContentFactory, ContainerFactory, ExtractFactory, LicenceFactory, \
+from zds.tutorialv2.factories import PublishableContentFactory, ContainerFactory, ExtractFactory, LicenseFactory, \
     SubCategoryFactory, PublishedContentFactory, tricky_text_content, BetaContentFactory
 from zds.tutorialv2.models.models_database import PublishableContent, Validation, PublishedContent, ContentReaction, \
     ContentRead
@@ -67,10 +67,10 @@ class ContentTests(TestCase):
         self.mas = ProfileFactory().user
         settings.ZDS_APP['member']['bot_account'] = self.mas.username
 
-        self.licence = LicenceFactory()
+        self.license = LicenseFactory()
         self.subcategory = SubCategoryFactory()
 
-        settings.ZDS_APP['content']['default_licence_pk'] = self.licence.pk
+        settings.ZDS_APP['content']['default_license_pk'] = self.license.pk
 
         self.user_author = ProfileFactory().user
         self.user_staff = StaffProfileFactory().user
@@ -79,7 +79,7 @@ class ContentTests(TestCase):
         self.tuto = PublishableContentFactory(type='TUTORIAL')
         self.tuto.authors.add(self.user_author)
         UserGalleryFactory(gallery=self.tuto.gallery, user=self.user_author, mode='W')
-        self.tuto.licence = self.licence
+        self.tuto.license = self.license
         self.tuto.subcategory.add(self.subcategory)
         self.tuto.save()
 
@@ -264,7 +264,7 @@ class ContentTests(TestCase):
                 'introduction': intro,
                 'conclusion': conclusion,
                 'type': u'TUTORIAL',
-                'licence': self.licence.pk,
+                'license': self.license.pk,
                 'subcategory': self.subcategory.pk,
                 'image': open('{}/fixtures/noir_black.png'.format(settings.BASE_DIR))
             },
@@ -287,7 +287,7 @@ class ContentTests(TestCase):
         self.assertEqual(result.status_code, 200)
 
         # edit tutorial:
-        new_licence = LicenceFactory()
+        new_license = LicenseFactory()
 
         result = self.client.post(
             reverse('content:edit', args=[pk, slug]),
@@ -297,7 +297,7 @@ class ContentTests(TestCase):
                 'introduction': random,
                 'conclusion': random,
                 'type': u'TUTORIAL',
-                'licence': new_licence.pk,
+                'license': new_license.pk,
                 'subcategory': self.subcategory.pk,
                 'last_hash': versioned.compute_hash(),
                 'image': open('{}/fixtures/logo.png'.format(settings.BASE_DIR))
@@ -310,12 +310,12 @@ class ContentTests(TestCase):
         tuto = PublishableContent.objects.get(pk=pk)
         self.assertEqual(tuto.title, random)
         self.assertEqual(tuto.description, random)
-        self.assertEqual(tuto.licence.pk, new_licence.pk)
+        self.assertEqual(tuto.license.pk, new_license.pk)
         versioned = tuto.load_version()
         self.assertEqual(versioned.get_introduction(), random)
         self.assertEqual(versioned.get_conclusion(), random)
         self.assertEqual(versioned.description, random)
-        self.assertEqual(versioned.licence.pk, new_licence.pk)
+        self.assertEqual(versioned.license.pk, new_license.pk)
         self.assertNotEqual(versioned.slug, slug)
 
         slug = tuto.slug  # make the title change also change the slug !!
@@ -846,7 +846,7 @@ class ContentTests(TestCase):
         old_slug_tuto = tuto.slug
         version_1 = tuto.sha_draft  # "version 1" is the one before any change
 
-        new_licence = LicenceFactory()
+        new_license = LicenseFactory()
         random = 'Pâques, c\'est bientôt?'
 
         result = self.client.post(
@@ -857,7 +857,7 @@ class ContentTests(TestCase):
                 'introduction': random,
                 'conclusion': random,
                 'type': u'TUTORIAL',
-                'licence': new_licence.pk,
+                'license': new_license.pk,
                 'subcategory': self.subcategory.pk,
                 'last_hash': versioned.compute_hash()
             },
@@ -1200,7 +1200,7 @@ class ContentTests(TestCase):
                 'introduction': some_text,
                 'conclusion': some_text,
                 'type': u'TUTORIAL',
-                'licence': self.licence.pk,
+                'license': self.license.pk,
                 'subcategory': self.subcategory.pk,
             },
             follow=False)
@@ -1375,7 +1375,7 @@ class ContentTests(TestCase):
                 'introduction': some_text,
                 'conclusion': some_text,
                 'type': u'TUTORIAL',
-                'licence': self.licence.pk,
+                'license': self.license.pk,
                 'subcategory': self.subcategory.pk,
             },
             follow=False)
@@ -1445,7 +1445,7 @@ class ContentTests(TestCase):
         # first, test if values are correctly set in DB
         self.assertEqual(new_tuto.title, tuto.title)
         self.assertEqual(new_tuto.description, tuto.description)
-        self.assertEqual(new_tuto.licence, tuto.licence)
+        self.assertEqual(new_tuto.license, tuto.license)
         self.assertEqual(new_tuto.type, tuto.type)
 
         self.assertNotEqual(new_tuto.slug, tuto_slug)  # slug should NEVER be the same !!
@@ -1455,7 +1455,7 @@ class ContentTests(TestCase):
 
         self.assertEqual(first_version.title, versioned.title)
         self.assertEqual(first_version.description, versioned.description)
-        self.assertEqual(first_version.licence, versioned.licence)
+        self.assertEqual(first_version.license, versioned.license)
         self.assertEqual(first_version.type, versioned.type)
 
         # ensure the content
@@ -1496,7 +1496,7 @@ class ContentTests(TestCase):
                 'introduction': some_text,
                 'conclusion': some_text,
                 'type': u'TUTORIAL',
-                'licence': self.licence.pk,
+                'license': self.license.pk,
                 'subcategory': self.subcategory.pk,
             },
             follow=False)
@@ -1566,7 +1566,7 @@ class ContentTests(TestCase):
         # first, test if values are correctly set in DB
         self.assertEqual(existing_tuto.title, tuto.title)
         self.assertEqual(existing_tuto.description, tuto.description)
-        self.assertEqual(existing_tuto.licence, tuto.licence)
+        self.assertEqual(existing_tuto.license, tuto.license)
         self.assertEqual(existing_tuto.type, tuto.type)
 
         self.assertNotEqual(existing_tuto.slug, tuto_slug)  # slug should NEVER be the same !!
@@ -1576,7 +1576,7 @@ class ContentTests(TestCase):
 
         self.assertEqual(first_version.title, versioned.title)
         self.assertEqual(first_version.description, versioned.description)
-        self.assertEqual(first_version.licence, versioned.licence)
+        self.assertEqual(first_version.license, versioned.license)
         self.assertEqual(first_version.type, versioned.type)
 
         # ensure the content
@@ -1633,7 +1633,7 @@ class ContentTests(TestCase):
             True)
 
         # create an article
-        article = PublishableContentFactory(type='ARTICLE', licence=self.licence)
+        article = PublishableContentFactory(type='ARTICLE', license=self.license)
 
         article.authors.add(self.user_author)
         UserGalleryFactory(gallery=article.gallery, user=self.user_author, mode='W')
@@ -2947,7 +2947,7 @@ class ContentTests(TestCase):
         tuto = PublishableContentFactory(type='TUTORIAL')
         tuto.authors.add(self.user_author)
         UserGalleryFactory(gallery=tuto.gallery, user=self.user_author, mode='W')
-        tuto.licence = self.licence
+        tuto.license = self.license
         tuto.subcategory.add(self.subcategory)
         tuto.save()
 
@@ -2972,7 +2972,7 @@ class ContentTests(TestCase):
                 'introduction': random,
                 'conclusion': random,
                 'type': u'TUTORIAL',
-                'licence': self.licence.pk,
+                'license': self.license.pk,
                 'subcategory': self.subcategory.pk,
                 'last_hash': ''
             },
@@ -2998,7 +2998,7 @@ class ContentTests(TestCase):
                 'introduction': random,
                 'conclusion': random,
                 'type': u'TUTORIAL',
-                'licence': self.licence.pk,
+                'license': self.license.pk,
                 'subcategory': self.subcategory.pk,
                 'last_hash': versioned.compute_hash()  # good hash
             },
@@ -3284,7 +3284,7 @@ class ContentTests(TestCase):
         tuto = PublishableContentFactory(type='TUTORIAL')
 
         UserGalleryFactory(gallery=tuto.gallery, user=self.user_author, mode='W')
-        tuto.licence = self.licence
+        tuto.license = self.license
         tuto.authors.add(self.user_author)
         tuto.save()
 
@@ -3694,7 +3694,7 @@ class ContentTests(TestCase):
             'introduction': u'une intro',
             'conclusion': u'une conclusion',
             'type': u'TUTORIAL',
-            'licence': self.licence.pk,
+            'license': self.license.pk,
             'subcategory': self.subcategory.pk,
         }
 
@@ -3757,7 +3757,7 @@ class PublishedContentTests(TestCase):
             category=CategoryFactory(position=1),
             position_in_category=1)  # ensure that the forum, for the beta versions, is created
 
-        self.licence = LicenceFactory()
+        self.license = LicenseFactory()
         self.subcategory = SubCategoryFactory()
 
         self.user_author = ProfileFactory().user
@@ -3768,7 +3768,7 @@ class PublishedContentTests(TestCase):
         self.tuto = PublishableContentFactory(type='TUTORIAL')
         self.tuto.authors.add(self.user_author)
         UserGalleryFactory(gallery=self.tuto.gallery, user=self.user_author, mode='W')
-        self.tuto.licence = self.licence
+        self.tuto.license = self.license
         self.tuto.subcategory.add(self.subcategory)
         self.tuto.save()
 
@@ -3814,7 +3814,7 @@ class PublishedContentTests(TestCase):
 
         article.authors.add(self.user_author)
         UserGalleryFactory(gallery=article.gallery, user=self.user_author, mode='W')
-        article.licence = self.licence
+        article.license = self.license
         article.save()
 
         # populate the article
@@ -3896,7 +3896,7 @@ class PublishedContentTests(TestCase):
 
         midsize_tuto.authors.add(self.user_author)
         UserGalleryFactory(gallery=midsize_tuto.gallery, user=self.user_author, mode='W')
-        midsize_tuto.licence = self.licence
+        midsize_tuto.license = self.license
         midsize_tuto.save()
 
         # populate the midsize_tuto
@@ -4006,7 +4006,7 @@ class PublishedContentTests(TestCase):
 
         bigtuto.authors.add(self.user_author)
         UserGalleryFactory(gallery=bigtuto.gallery, user=self.user_author, mode='W')
-        bigtuto.licence = self.licence
+        bigtuto.license = self.license
         bigtuto.save()
 
         # populate the bigtuto
@@ -5045,7 +5045,7 @@ class PublishedContentTests(TestCase):
                 'introduction': random,
                 'conclusion': random,
                 'type': u'TUTORIAL',
-                'licence': self.tuto.licence.pk,
+                'license': self.tuto.license.pk,
                 'subcategory': self.subcategory.pk,
                 'last_hash': tuto.load_version().compute_hash(),
                 'image': open('{}/fixtures/logo.png'.format(settings.BASE_DIR))
@@ -5167,7 +5167,7 @@ class PublishedContentTests(TestCase):
                 'introduction': "a",
                 'conclusion': "b",
                 'type': u'TUTORIAL',
-                'licence': self.licence.pk,
+                'license': self.license.pk,
                 'subcategory': self.subcategory.pk,
                 'last_hash': tuto.sha_draft,
             },
@@ -5194,7 +5194,7 @@ class PublishedContentTests(TestCase):
 
     def test_unpublish_with_title_change(self):
         # aka 3329
-        article = PublishedContentFactory(type="ARTICLE", author_list=[self.user_author], licence=self.licence)
+        article = PublishedContentFactory(type="ARTICLE", author_list=[self.user_author], license=self.license)
         registered_validation = Validation(
             content=article,
             version=article.sha_draft,
@@ -5219,7 +5219,7 @@ class PublishedContentTests(TestCase):
                 'introduction': article.load_version().get_introduction(),
                 'conclusion': article.load_version().get_conclusion(),
                 'type': u'ARTICLE',
-                'licence': article.licence.pk,
+                'license': article.license.pk,
                 'subcategory': self.subcategory.pk,
                 'last_hash': article.load_version(article.sha_draft).compute_hash(),
                 'image': open('{}/fixtures/logo.png'.format(settings.BASE_DIR))
@@ -5252,7 +5252,7 @@ class PublishedContentTests(TestCase):
                 'introduction': "crappy crap",
                 'conclusion': "crappy crap",
                 'type': u'TUTORIAL',
-                'licence': self.licence.pk,
+                'license': self.license.pk,
                 'subcategory': self.subcategory.pk,
                 'last_hash': published.load_version().compute_hash()  # good hash
             },

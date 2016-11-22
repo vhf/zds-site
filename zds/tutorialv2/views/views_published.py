@@ -303,7 +303,7 @@ class ListOnlineContents(ContentTypeMixin, ZdSPagingListView):
             .prefetch_related("content")\
             .prefetch_related("content__subcategory")\
             .prefetch_related("content__authors")\
-            .select_related('content__licence')\
+            .select_related('content__license')\
             .select_related('content__image')\
             .select_related('content__last_note')\
             .select_related('content__last_note__related_content')\

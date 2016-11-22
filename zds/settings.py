@@ -425,7 +425,7 @@ ZDS_APP = {
             },
             'cookies': {
                 'code': u"CC-BY",
-                'title': u"Licence Creative Commons",
+                'title': u"License Creative Commons",
                 'description': u"licence Creative Commons Attribution 4.0 International",
                 'url_image': u"http://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png",
                 'url_license': u"http://creativecommons.org/licenses/by-nc-sa/4.0/"
@@ -436,9 +436,9 @@ ZDS_APP = {
                 'provider_name': u"Progdupeupl",
                 'provider_url': u"http://pdp.microjoe.org",
             },
-            'licence_info_title': u'http://zestedesavoir.com/tutoriels/281/le-droit-dauteur-creative-commons-et-les-lic'
+            'license_info_title': u'http://zestedesavoir.com/tutoriels/281/le-droit-dauteur-creative-commons-et-les-lic'
                                   u'ences-sur-zeste-de-savoir/',
-            'licence_info_link': u'Le droit d\'auteur, Creative Commons et les licences sur Zeste de Savoir'
+            'license_info_link': u'Le droit d\'auteur, Creative Commons et les licences sur Zeste de Savoir'
         },
         'hosting': {
             'name': u"GANDI SAS",
@@ -485,8 +485,8 @@ ZDS_APP = {
         # or 'extra_content_generation_policy': "NOTHING"
         'extra_content_generation_policy': "SYNC",
         'extra_content_watchdog_dir': os.path.join(BASE_DIR, "watchdog-build"),
+        'default_license_pk': 7,
         'max_tree_depth': 3,
-        'default_licence_pk': 7,
         'content_per_page': 60,
         'notes_per_page': 25,
         'helps_per_page': 20,

@@ -35,7 +35,7 @@ class SearchIndexContent(models.Model):
     pubdate = models.DateTimeField('Date de création')
     update_date = models.DateTimeField('Date de mise à jours', blank=True, null=True)
 
-    licence = models.CharField('Licence du contenu', max_length=200)
+    license = models.CharField('Licence du contenu', max_length=200)
     url_image = models.CharField('L\'adresse vers l\'image du contenu', max_length=200, null=True, blank=True)
 
     tags = models.ManyToManyField(SearchIndexTag, verbose_name='Tags', blank=True, db_index=True)

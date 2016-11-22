@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from zds.utils.models import Alert, Licence, Category, SubCategory, CategorySubCategory, Tag, HelpWriting
+from zds.utils.models import Alert, License, Category, SubCategory, CategorySubCategory, Tag, HelpWriting
 
 
 class SubCategoryAdmin(admin.ModelAdmin):
@@ -17,7 +17,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
 
 admin.site.register(Alert)
 admin.site.register(Tag)
-admin.site.register(Licence)
+admin.site.register(License)
 admin.site.register(Category)
 admin.site.register(SubCategory, SubCategoryAdmin)
 admin.site.register(CategorySubCategory)

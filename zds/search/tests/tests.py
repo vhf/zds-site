@@ -11,7 +11,7 @@ from zds.member.factories import ProfileFactory
 from zds.search.models import SearchIndexContent, SearchIndexContainer, SearchIndexExtract
 from zds.search.utils import filter_keyword, filter_text, reindex_content
 from zds.settings import BASE_DIR
-from zds.tutorialv2.factories import LicenceFactory, SubCategoryFactory, PublishableContentFactory, ContainerFactory, \
+from zds.tutorialv2.factories import LicenseFactory, SubCategoryFactory, PublishableContentFactory, ContainerFactory, \
     ExtractFactory
 from zds.tutorialv2.publication_utils import publish_content
 
@@ -45,7 +45,7 @@ class TryToIndexTutorialTests(TestCase):
             category=CategoryFactory(position=1),
             position_in_category=1)  # ensure that the forum, for the beta versions, is created
 
-        self.licence = LicenceFactory()
+        self.license = LicenseFactory()
         self.subcategory = SubCategoryFactory()
 
         self.user_author = ProfileFactory().user
@@ -56,7 +56,7 @@ class TryToIndexTutorialTests(TestCase):
         self.tuto = PublishableContentFactory(type='TUTORIAL')
         self.tuto.authors.add(self.user_author)
         UserGalleryFactory(gallery=self.tuto.gallery, user=self.user_author, mode='W')
-        self.tuto.licence = self.licence
+        self.tuto.license = self.license
         self.tuto.subcategory.add(self.subcategory)
         self.tuto.save()
 
@@ -79,7 +79,7 @@ class TryToIndexTutorialTests(TestCase):
         self.article = PublishableContentFactory(type='ARTICLE')
         self.article.authors.add(self.user_author)
         UserGalleryFactory(gallery=self.article.gallery, user=self.user_author, mode='W')
-        self.article.licence = self.licence
+        self.article.license = self.license
         self.article.subcategory.add(self.subcategory)
         self.article.save()
 
@@ -121,7 +121,7 @@ class TryToIndexTutorialTests(TestCase):
                 self.assertEqual(content.title, self.article.title)
                 self.assertEqual(content.description, self.article.description)
 
-                self.assertEqual(content.licence, self.licence.title)
+                self.assertEqual(content.license, self.license.title)
                 if self.article.image:
                     self.assertEqual(content.url_image, self.article.image.get_absolute_url())
 
@@ -132,7 +132,7 @@ class TryToIndexTutorialTests(TestCase):
                 self.assertEqual(content.title, self.tuto.title)
                 self.assertEqual(content.description, self.tuto.description)
 
-                self.assertEqual(content.licence, self.licence.title)
+                self.assertEqual(content.license, self.license.title)
                 if self.tuto.image:
                     self.assertEqual(content.url_image, self.tuto.image.get_absolute_url())
 

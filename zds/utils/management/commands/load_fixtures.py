@@ -16,7 +16,7 @@ from zds.member.factories import StaffProfileFactory, ProfileFactory
 from django.contrib.auth.models import User, Permission
 from zds.member.models import Profile
 from zds.forum.models import Forum, Topic, Category as FCategory
-from zds.utils.models import Tag, Category as TCategory, CategorySubCategory, SubCategory, Licence
+from zds.utils.models import Tag, Category as TCategory, CategorySubCategory, SubCategory, License
 from zds.utils import slugify
 from zds import settings
 from django.db import transaction
@@ -277,10 +277,10 @@ def load_categories_content(cli, size, fake):
 
     lics = ["CB-BY", "CC-BY-ND", "CC-BY-ND-SA", "CC-BY-SA", "CC", "CC-BY-IO", "Tout-Droits"]
     for lic in lics:
-        ex = Licence.objects.filter(code=lic).all()
+        ex = License.objects.filter(code=lic).all()
         if len(ex) is 0:
-            licence = Licence(code=lic, title=lic, description="")
-            licence.save()
+            license = License(code=lic, title=lic, description="")
+            license.save()
             cli.stdout.write(u'Note: ajout de la licence {}'.format(lic))
     categories = []
     sub_categories = []
@@ -440,7 +440,7 @@ def load_contents(cli, _type, size, fake):
                          u"Vous devez rajouter les staffs dans vos fixtures (staff)")
         return
 
-    licenses = list(Licence.objects.all())
+    licenses = list(License.objects.all())
     nb_licenses = len(licenses)
 
     if nb_licenses == 0:
@@ -484,7 +484,7 @@ def load_contents(cli, _type, size, fake):
         author = users[random.randint(0, nb_users - 1)].user
         content.authors.add(author)
         UserGalleryFactory(gallery=content.gallery, mode="W", user=author)
-        content.licence = licenses[random.randint(0, nb_licenses - 1)]
+        content.license = licenses[random.randint(0, nb_licenses - 1)]
         content.sha_draft = versioned.sha_draft
         content.subcategory.add(sub_categories[random.randint(0, nb_sub_categories - 1)])
         content.save()

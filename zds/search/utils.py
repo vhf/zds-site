@@ -204,10 +204,10 @@ def reindex_content(published_content):
     search_index_content.pubdate = published_content.publication_date or datetime.now()
     search_index_content.update_date = published_content.content.update_date or datetime.now()
 
-    if published_content.content.licence:
-        search_index_content.licence = published_content.content.licence.title
+    if published_content.content.license:
+        search_index_content.license = published_content.content.license.title
     else:
-        search_index_content.licence = ''
+        search_index_content.license = ''
 
     if published_content.content.image:
         search_index_content.url_image = published_content.content.image.get_absolute_url()

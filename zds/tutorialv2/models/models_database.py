@@ -31,7 +31,7 @@ from zds.forum.models import Topic
 from zds.gallery.models import Image, Gallery, UserGallery
 from zds.tutorialv2.utils import get_content_from_json, BadManifestError
 from zds.utils import get_current_user
-from zds.utils.models import SubCategory, Licence, HelpWriting, Comment, Tag
+from zds.utils.models import SubCategory, License, HelpWriting, Comment, Tag
 from zds.utils.tutorials import get_blob
 from zds.tutorialv2.models import TYPE_CHOICES, STATUS_CHOICES
 from zds.tutorialv2.models.models_versioned import NotAPublicVersion
@@ -46,7 +46,7 @@ class PublishableContent(models.Model):
 
     A PublishableContent retains metadata about a content in database, such as
 
-    - authors, description, source (if the content comes from another website), subcategory, tags and licence ;
+    - authors, description, source (if the content comes from another website), subcategory, tags and license ;
     - Thumbnail and gallery ;
     - Creation, publication and update date ;
     - Public, beta, validation and draft sha, for versioning ;
@@ -94,7 +94,7 @@ class PublishableContent(models.Model):
     sha_draft = models.CharField('Sha1 de la version de rédaction',
                                  blank=True, null=True, max_length=80, db_index=True)
     beta_topic = models.ForeignKey(Topic, verbose_name='Sujet beta associé', default=None, blank=True, null=True)
-    licence = models.ForeignKey(Licence,
+    license = models.ForeignKey(License,
                                 verbose_name='Licence',
                                 blank=True, null=True, db_index=True)
     # as of ZEP 12 this field is no longer the size but the type of content (article/tutorial)

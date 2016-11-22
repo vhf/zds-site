@@ -17,7 +17,7 @@ from zds.mp.models import mark_read
 from zds.notification import signals
 from zds.notification.models import Notification, TopicAnswerSubscription, ContentReactionAnswerSubscription, \
     PrivateTopicAnswerSubscription, NewTopicSubscription, NewPublicationSubscription
-from zds.tutorialv2.factories import PublishableContentFactory, LicenceFactory, ContentReactionFactory, \
+from zds.tutorialv2.factories import PublishableContentFactory, LicenseFactory, ContentReactionFactory, \
     SubCategoryFactory
 from zds.tutorialv2.models.models_database import ContentReaction, PublishableContent
 from zds.tutorialv2.publication_utils import publish_content
@@ -382,7 +382,7 @@ class NotificationPublishableContentTest(TestCase):
         self.tuto = PublishableContentFactory(type='TUTORIAL')
         self.tuto.authors.add(self.user1)
         UserGalleryFactory(gallery=self.tuto.gallery, user=self.user1, mode='W')
-        self.tuto.licence = LicenceFactory()
+        self.tuto.license = LicenseFactory()
         self.tuto.subcategory.add(SubCategoryFactory())
         self.tuto.save()
         tuto_draft = self.tuto.load_version()

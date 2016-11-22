@@ -10,7 +10,7 @@ from django.test.utils import override_settings
 from zds.settings import BASE_DIR
 
 from zds.member.factories import ProfileFactory, StaffProfileFactory
-from zds.tutorialv2.factories import PublishableContentFactory, ContainerFactory, ExtractFactory, LicenceFactory, \
+from zds.tutorialv2.factories import PublishableContentFactory, ContainerFactory, ExtractFactory, LicenseFactory, \
     PublishedContentFactory, SubCategoryFactory
 from zds.gallery.factories import UserGalleryFactory
 from zds.tutorialv2.models.models_database import PublishableContent
@@ -35,7 +35,7 @@ class ContentTests(TestCase):
         self.mas = ProfileFactory().user
         settings.ZDS_APP['member']['bot_account'] = self.mas.username
 
-        self.licence = LicenceFactory()
+        self.license = LicenseFactory()
 
         self.user_author = ProfileFactory().user
         self.staff = StaffProfileFactory().user
@@ -43,7 +43,7 @@ class ContentTests(TestCase):
         self.tuto = PublishableContentFactory(type='TUTORIAL')
         self.tuto.authors.add(self.user_author)
         UserGalleryFactory(gallery=self.tuto.gallery, user=self.user_author, mode='W')
-        self.tuto.licence = self.licence
+        self.tuto.license = self.license
         self.tuto.save()
 
         self.tuto_draft = self.tuto.load_version()
@@ -441,7 +441,7 @@ class ContentTests(TestCase):
         old_date = article.public_version.publication_date
         old_title = article.public_version.title()
         old_description = article.public_version.description()
-        article.licence = LicenceFactory()
+        article.license = LicenseFactory()
         article.save()
         self.assertEqual(
             self.client.login(
@@ -452,7 +452,7 @@ class ContentTests(TestCase):
             "title": old_title + "bla",
             "description": old_description + "bla",
             "type": "ARTICLE",
-            "licence": article.licence.pk,
+            "license": article.license.pk,
             "subcategory": SubCategoryFactory().pk,
             "last_hash": article.sha_draft
         })

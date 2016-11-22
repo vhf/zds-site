@@ -14,7 +14,7 @@ from zds.forum.factories import ForumFactory, CategoryFactory
 from zds.settings import BASE_DIR
 from zds.tutorialv2.models.models_database import PublishedContent
 from zds.tutorialv2.feeds import LastTutorialsFeedRSS, LastTutorialsFeedATOM, LastArticlesFeedRSS, LastArticlesFeedATOM
-from zds.tutorialv2.factories import LicenceFactory, SubCategoryFactory, PublishableContentFactory, ContainerFactory, \
+from zds.tutorialv2.factories import LicenseFactory, SubCategoryFactory, PublishableContentFactory, ContainerFactory, \
     ExtractFactory
 from zds.tutorialv2.publication_utils import publish_content
 
@@ -49,7 +49,7 @@ class LastTutorialsFeedRSSTest(TestCase):
             category=CategoryFactory(position=1),
             position_in_category=1)  # ensure that the forum, for the beta versions, is created
 
-        self.licence = LicenceFactory()
+        self.license = LicenseFactory()
         self.subcategory = SubCategoryFactory()
 
         self.user_author = ProfileFactory().user
@@ -60,7 +60,7 @@ class LastTutorialsFeedRSSTest(TestCase):
         self.tuto = PublishableContentFactory(type='TUTORIAL')
         self.tuto.authors.add(self.user_author)
         UserGalleryFactory(gallery=self.tuto.gallery, user=self.user_author, mode='W')
-        self.tuto.licence = self.licence
+        self.tuto.license = self.license
         self.tuto.subcategory.add(self.subcategory)
         self.tuto.save()
 
@@ -175,7 +175,7 @@ class LastArticlesFeedRSSTest(TestCase):
             category=CategoryFactory(position=1),
             position_in_category=1)  # ensure that the forum, for the beta versions, is created
 
-        self.licence = LicenceFactory()
+        self.license = LicenseFactory()
         self.subcategory = SubCategoryFactory()
 
         self.user_author = ProfileFactory().user
@@ -186,7 +186,7 @@ class LastArticlesFeedRSSTest(TestCase):
         self.article = PublishableContentFactory(type='ARTICLE')
         self.article.authors.add(self.user_author)
         UserGalleryFactory(gallery=self.article.gallery, user=self.user_author, mode='W')
-        self.article.licence = self.licence
+        self.article.license = self.license
         self.article.subcategory.add(self.subcategory)
         self.article.save()
 

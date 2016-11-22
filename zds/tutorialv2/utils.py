@@ -23,7 +23,7 @@ from zds.notification import signals
 from zds.tutorialv2 import REPLACE_IMAGE_PATTERN, VALID_SLUG
 from zds.utils import get_current_user
 from zds.utils import slugify as old_slugify
-from zds.utils.models import Licence
+from zds.utils.models import License
 
 
 def all_is_string_appart_from_children(dict_representation):
@@ -497,11 +497,13 @@ def get_content_from_json(json, sha, slug_last_draft, public=False, max_title_le
             if json['type'] == 'ARTICLE' or json['type'] == 'TUTORIAL':
                 versioned.type = json['type']
 
-        if 'licence' in json:
-            versioned.licence = Licence.objects.filter(code=json['licence']).first()
+        if 'license' in json:
+            versioned.license = License.objects.filter(code=json['license']).first()
+        elif 'licence' in json:  # backward compatibility with previous json schema
+            versioned.license = License.objects.filter(code=json['licence']).first()
 
-        if 'licence' not in json or not versioned.licence:
-            versioned.licence = Licence.objects.filter(pk=settings.ZDS_APP['content']['default_licence_pk']).first()
+        if not versioned.license:
+            versioned.license = License.objects.filter(pk=settings.ZDS_APP['content']['default_license_pk']).first()
 
         if 'introduction' in json:
             versioned.introduction = json['introduction']
@@ -532,11 +534,14 @@ def get_content_from_json(json, sha, slug_last_draft, public=False, max_title_le
             versioned.introduction = json["introduction"]
         if "conclusion" in json:
             versioned.conclusion = json["conclusion"]
-        if 'licence' in json:
-            versioned.licence = Licence.objects.filter(code=json['licence']).first()
 
-        if 'licence' not in json or not versioned.licence:
-            versioned.licence = Licence.objects.filter(pk=settings.ZDS_APP['content']['default_licence_pk']).first()
+        if 'license' in json:
+            versioned.license = License.objects.filter(code=json['license']).first()
+        elif 'licence' in json:  # backward compatibility with previous json schema
+            versioned.license = License.objects.filter(code=json['licence']).first()
+
+        if not versioned.license:
+            versioned.license = License.objects.filter(pk=settings.ZDS_APP['content']['default_license_pk']).first()
 
         if _type == 'ARTICLE':
             extract = Extract("text", '')
@@ -741,7 +746,7 @@ def init_new_repo(db_object, introduction_text, conclusion_text, commit_message=
     versioned_content = VersionedContent(None, db_object.type, db_object.title, db_object.slug)
 
     # fill some information that are missing :
-    versioned_content.licence = db_object.licence
+    versioned_content.license = db_object.license
     versioned_content.description = db_object.description
 
     # perform changes:
@@ -854,8 +859,8 @@ def export_content(content):
     dct['version'] = 2  # to recognize old and new version of the content
     dct['description'] = content.description
     dct['type'] = content.type
-    if content.licence:
-        dct['licence'] = content.licence.code
+    if content.license:
+        dct['license'] = content.license.code
 
     return dct
 
