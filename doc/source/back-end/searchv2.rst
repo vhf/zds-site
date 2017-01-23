@@ -196,10 +196,10 @@ où ``<action>`` peut être
 + ``clear`` : supprime l'*index* du *cluster* d'ES et marque toutes les données comme "à indexer" ;
 + ``setup`` : crée et configure l'*index* (y compris le *mapping* et l'*analyzer*) dans le *cluster* d'ES ;
 + ``index_flagged`` : indexe les données marquées comme "à indexer" ;
-+ ``index_all`` : combine les 3 actions précédentes, donc recrée un *index* et y indexe toute les données (qu'elles soient marquées comme "à indexer" ou non).
++ ``index_all`` : combine les 3 actions précédentes, donc recrée un *index* et y indexe toute les données (quelles soient marquées comme "à indexer" ou non).
 
 
-La commande ``index-flagged`` peut donc être lancée de manière régulière (via un *cron* ou *systemd*) afin d'indexer les données de manière régulière.
+La commande ``index_flagged`` peut donc être lancée de manière régulière (via un *cron* ou *systemd*) afin d'indexer les données de manière régulière.
 
 .. note::
 
@@ -255,8 +255,8 @@ Différentes fonctions peuvent ou doivent ensuite être surchargées. Parmi ces 
           @classmethod
           def get_es_django_indexable(cls, force_reindexing=False):
               q = super(Post, cls).get_es_django_indexable(force_reindexing)\
-                  .select_related('topic')\
-                  .select_related('topic__forum')
+                  .prefetch_related('topic')\
+                  .prefetch_related('topic__forum')
 
       où ``q`` est un *queryset* Django.
 
@@ -317,16 +317,18 @@ En particulier, c'est la méthode ``get_es_indexable()`` qui est modifiée, prof
 .. sourcecode:: python
 
     @classmethod
-    def get_es_indexable(cls, force_reindexing=False, objects_per_batch=100):
+    def get_es_indexable(cls, force_reindexing=False):
         """Overridden to include chapters as well
         """
 
         index_manager = ESIndexManager(**settings.ES_SEARCH_INDEX)
-
-        for contents in super(PublishedContent, cls).get_es_indexable(force_reindexing, objects_per_batch=100):
+        last_pk = 0
+        objects_source = super(PublishedContent, cls).get_es_indexable(force_reindexing)
+        objects = list(objects_source.filter(pk__gt=last_pk)[:PublishedContent.objects_per_batch])
+        while objects:
             chapters = []
 
-            for content in contents:
+            for content in objects:
                 versioned = content.load_public_version()
 
                 if versioned.has_sub_containers():  # chapters are only indexed for middle and big tuto
@@ -339,16 +341,17 @@ En particulier, c'est la méthode ``get_es_indexable()`` qui est modifiée, prof
                     # (re)index the new one(s)
                     for chapter in versioned.get_list_of_chapters():
                         chapters.append(FakeChapter(chapter, versioned, content.es_id))
-
+            last_pk = objects[-1].pk
+            objects = list(objects_source.filter(pk__gt=last_pk)[:PublishedContent.objects_per_batch])
             yield chapters
-            yield contents
+            yield objects
 
 
 
-Le code tient aussi compte du fait que la classe ``PublishedContent`` `permet de tenir compte du changement de slug <contents.html#le-stockage-en-base-de-donnees>`_ afin de maintenir le SEO.
-Ainsi, la méthode ``save()`` est modifiée de manière à supprimer toute référence à elle même et aux chapitres correspondants si un objet correspondant au même contenu, mais avec un nouveau slug est créé.
+Le code tient aussi compte du fait que la classe ``PublishedContent`` `gère le changement de slug <contents.html#le-stockage-en-base-de-donnees>`_ afin de maintenir le SEO.
+Ainsi, la méthode ``save()`` est modifiée de manière à supprimer toute référence à elle même et aux chapitres correspondants si un objet correspondant au même contenu mais avec un nouveau slug est créé.
 
 .. note::
 
-    Au niveau de ES, une relation de type parent-enfant (`voir la documentation ici <https://www.elastic.co/guide/en/elasticsearch/guide/2.x/parent-child.html>`_) est définie entre les contenus et les chapitres correspondants.
+    Dans ES, une relation de type parent-enfant (`voir la documentation ici <https://www.elastic.co/guide/en/elasticsearch/guide/2.x/parent-child.html>`_) est définie entre les contenus et les chapitres correspondants.
     Cette relation est utilisée pour la suppression, mais il est possible de l'exploiter dans d'autres buts.
