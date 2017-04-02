@@ -429,7 +429,7 @@ def unpublish_content(db_object):
 
     try:
         public_version = PublishedContent.objects.get(pk=db_object.public_version.pk)
-
+        print 'ax1'
         # clean files
         old_path = public_version.get_prod_path()
 
@@ -438,9 +438,9 @@ def unpublish_content(db_object):
 
         # remove public_version:
         public_version.delete()
-
-        db_object.public_version = None
-        db_object.save()
+        print 'ax2'
+        db_object.update(public_version=None)
+        print 'ax3'
         content_unpublished.send(sender=db_object.__class__, instance=db_object)
         return True
 

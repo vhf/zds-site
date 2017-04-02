@@ -607,12 +607,11 @@ class UnpublishOpinion(LoginRequiredMixin, SingleOnlineContentFormViewMixin, NoV
         if user not in versioned.authors.all() and not user.has_perm('tutorialv2.change_validation'):
             raise PermissionDenied
 
-        unpublish_content(self.object)
+        self.object.update(sha_public=None, sha_picked=None, pubdate=None)
 
-        self.object.sha_public = None
-        self.object.sha_picked = None
-        self.object.pubdate = None
-        self.object.save()
+        print 'ax4'
+        print unpublish_content(self.object)
+        print 'ax5'
 
         # send PM
         msg = render_to_string(
