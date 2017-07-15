@@ -286,13 +286,42 @@ def get_target_tagged_tree_for_container(movable_child, root, bias=-1):
     return target_tagged_tree
 
 
-def retrieve_image(url, directory):
+def normalize_path(path):
+    return path.replace(' ', '_')
+
+
+def image_converters(downloaded_image_path, img_filename, directory):
+    dest_path_as_png = os.path.join('images', normalize_path(img_filename) + '.png')
+
+    def from_svg():
+        resize_svg(downloaded_image_path)
+        dest_path = dest_path_as_png
+        cairosvg.svg2png(url=downloaded_image_path, write_to=os.path.join(directory, dest_path))
+        os.remove(downloaded_image_path)
+        return dest_path_as_png
+
+    # for gif or no extension
+    def default_converter():
+        img = ImagePIL.open(downloaded_image_path)
+        dest_path = dest_path_as_png
+        img.save(os.path.join(directory, dest_path))
+        os.remove(downloaded_image_path)
+        return dest_path_as_png
+
+    return {
+        'svg': from_svg,
+        'gif': default_converter,
+        '': default_converter,
+    }
+
+
+def retrieve_image(url, dest_directory):
     """For a given image, retrieve it, transform it into PNG (if needed) and store it
 
     :param url: URL of the image (either local or online)
     :type url: str
-    :param directory: place where the image will be stored
-    :type directory: str
+    :param dest_directory: directory where the image will be stored
+    :type dest_directory: str
     :return: the 'transformed' path to the image
     :rtype: str
     """
@@ -300,68 +329,56 @@ def retrieve_image(url, directory):
     # parse URL
     parsed_url = urlparse(url)
 
-    img_directory, img_basename = os.path.split(parsed_url.path)
-    img_basename = img_basename.decode('utf-8')
-    img_basename_splitted = img_basename.split('.')
+    remote_dir, remote_basename = os.path.split(parsed_url.path)
+    remote_basename = remote_basename.decode('utf-8')
+    filename, extension = os.path.splitext(remote_basename)
 
-    if len(img_basename_splitted) > 1:
-        img_extension = img_basename_splitted[-1].lower()
-        img_filename = '.'.join(img_basename_splitted[:-1])
-    else:
-        img_extension = ''
-        img_filename = img_basename
+    dest_path = os.path.join('images', normalize_path(remote_basename))
+    dest_path_as_png = os.path.join('images', normalize_path(filename) + '.png')
 
-    new_url = os.path.join('images', img_basename.replace(' ', '_'))
-    new_url_as_png = os.path.join('images', img_filename.replace(' ', '_') + '.png')
+    downloaded_image_path = os.path.abspath(os.path.join(dest_directory, dest_path))
 
-    store_path = os.path.abspath(os.path.join(directory, new_url))  # destination
-
-    if not img_basename or os.path.exists(store_path) or os.path.exists(os.path.join(directory, new_url_as_png)):
+    # FIXME: do this in a while loop to ensure there's no conflict
+    # there's no `remote_basename` if the image URL doesn't have a filename in it
+    if not remote_basename or \
+       os.path.exists(downloaded_image_path) or \
+       os.path.exists(os.path.join(dest_directory, dest_path_as_png)):
         # another image with the same name already exists (but assume the two are different)
-        img_filename += '_' + str(datetime.now().microsecond)
-        new_url = os.path.join('images', img_filename.replace(' ', '_') + '.' + img_extension)
-        new_url_as_png = os.path.join('images', img_filename.replace(' ', '_') + '.png')
-        store_path = os.path.abspath(os.path.join(directory, new_url))
+        filename += '_' + str(datetime.now().microsecond)
+        dest_path = os.path.join('images', normalize_path(filename) + '.' + extension)
+        downloaded_image_path = os.path.abspath(os.path.join(dest_directory, dest_path))
 
     try:
         if parsed_url.scheme in ['http', 'https', 'ftp'] \
-                or parsed_url.netloc[:3] == 'www' or parsed_url.path[:3] == 'www':
-            urlretrieve(url, store_path)  # download online image
+                or parsed_url.netloc[:3] == 'www' \
+                or parsed_url.path[:3] == 'www':
+            urlretrieve(url, downloaded_image_path)  # download online image
         else:  # it's a local image, coming from a gallery
 
-            if url[0] == '/':  # because `os.path.join()` think it's an absolute path if it start with `/`
+            if url[0] == '/':  # because `os.path.join()` thinks it's an absolute path if it starts with `/`
                 url = url[1:]
 
             source_path = os.path.join(settings.BASE_DIR, url)
             if os.path.isfile(source_path):
-                shutil.copy(source_path, store_path)
+                shutil.copy(source_path, downloaded_image_path)
             else:
                 raise IOError(source_path)  # ... will use the default image instead
 
-        if img_extension == 'svg':  # if SVG, will transform it into PNG
-            resize_svg(store_path)
-            new_url = new_url_as_png
-            cairosvg.svg2png(url=store_path, write_to=os.path.join(directory, new_url))
-            os.remove(store_path)
-        else:
-            img = ImagePIL.open(store_path)
-            if img_extension == 'gif' or not img_extension.strip():
-                # if no extension or gif, will transform it into PNG !
-                new_url = new_url_as_png
-                img.save(os.path.join(directory, new_url))
-                os.remove(store_path)
+        convert = image_converters(downloaded_image_path, filename, dest_directory).get(extension, None)
+        if convert is not None:
+            dest_path = convert()
 
     except (IOError, KeyError):  # HTTP 404, image does not exists, or Pillow cannot read it !
 
         # will be overwritten anyway, so it's better to remove whatever it was, for security reasons :
-        if os.path.exists(store_path):
-            os.remove(store_path)
+        if os.path.exists(downloaded_image_path):
+            os.remove(downloaded_image_path)
 
         img = ImagePIL.open(settings.ZDS_APP['content']['default_image'])
-        new_url = new_url_as_png
-        img.save(os.path.join(directory, new_url))
+        dest_path = dest_path_as_png
+        img.save(os.path.join(dest_directory, dest_path))
 
-    return new_url
+    return dest_path
 
 
 def resize_svg(source):
@@ -416,7 +433,7 @@ def retrieve_image_and_update_link(group, previous_urls, directory='.'):
 
     # look for image URL, and make it if needed
     if url not in previous_urls:
-        new_url = retrieve_image(url, directory=directory)
+        new_url = retrieve_image(url, dest_directory=directory)
         previous_urls[url] = new_url
 
     return start + txt + previous_urls[url] + end
